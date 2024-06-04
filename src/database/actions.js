@@ -1,14 +1,5 @@
 const mongoose = require("mongoose");
 const {users, tokens} = require('./dbs');
-mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
-
-
-// {
-    //     'user_id' : 'mm1632',
-    //     'email' : 'mm1632@srmist.edu.in',
-    //     'user_name' : 'Javidh',
-    //     'password' : 'Javidh'
-    // }
 
 async function newUser(data){
     try{
@@ -31,33 +22,27 @@ async function newUser(data){
 
 async function logIn(user_id, password){
     let x = await users.findOne({'user_id': user_id})
-    if(x['password'] != password) return '-1';
+    if(x == null || x['password'] != password) return '-1';
 
     x = await tokens.findOne({'user_id': user_id})
     if(x != null){
-        console.log("NO new login");
-        let min = (Date.now() - x['time'])/60000;     
-        console.log(min);
+        let min = (Date.now() - x['time'])/60000;
         if(min < 1) {
             await tokens.updateOne(
                 {'user_id': user_id},
                 {$set: {"time":Date.now()}}
             )
-            return x['token'];
+            return x;
         }
         await tokens.deleteOne({'user_id': user_id});
     }
 
-    console.log("new login")
-
     let token = generateToken()
-    console.log(user_id, Date.now());
-    await tokens.create({
+    return await tokens.create({
         'token' : token,
         'user_id' : user_id,
         'time' : Date.now()
-    })
-    return token;
+    });
 }
 
 function generateToken() {
@@ -70,13 +55,31 @@ function generateToken() {
     return token;
 }
 
+async function authenticate(token) {
+    let x = await tokens.findOne({'token': token})
+    
+    if(x == null) return x;
+    let min = (Date.now() - x['time'])/60000;
+    if(min > 1){
+        await tokens.deleteOne({'token': token})
+        return null;
+    }
+    return x;
+}
+
 // console.log(logIn('ss0905', 'Faizaan'))
 
-(async () => {
-    console.log(
-        await logIn('mm1632', 'Javidh')
-    )
-})()
+// (async () => {
+//     console.log(
+//         await logIn('mm1632', 'Javidh')
+//     )
+// })()
+
+// (async () => {
+//     console.log(
+//         await authenticate("0Vd93O5TyVojbU6Yp06G")
+//     )
+// })()
 
 // (async () => {
 //     console.log(await newUser(
@@ -88,3 +91,7 @@ function generateToken() {
 //         }
 //     ))
 // })()
+
+module.exports = {
+    logIn, newUser
+};

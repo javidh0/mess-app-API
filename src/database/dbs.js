@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const users = mongoose.model(
     "users", 
     {
@@ -43,6 +42,42 @@ const tokens = mongoose.model(
     }
 );
 
+const food = mongoose.model(
+    "food", 
+    {
+        "id" : {
+            type: Number,
+            require : true,
+            unique: true
+        },
+        "name" : {
+            type: String,
+            require : true
+        },
+        "img" : {
+            type : String
+        }
+    }
+);
+
+const time = mongoose.model(
+    "times",
+    {
+        "order": {
+            type: Number,
+            require: true
+        },
+        "day" : {
+            type: Number,
+            require: true,
+        },
+        "id" : {
+            type: Number,
+            require: true
+        }
+    }
+)
+
 // users.create({
 //     'user_id' : 'mm1632',
 //     'email' : 'mm1632@srmist.edu.in',
@@ -51,5 +86,5 @@ const tokens = mongoose.model(
 // })
 
 module.exports = {
-    users, tokens
+    users, tokens, time, food
 };
