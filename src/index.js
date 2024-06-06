@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const {logIn, newUser} = require("./database/actions");
+const {logIn, newUser, authenticate} = require("./database/actions");
+const {getFoodDetials, getFoodOnDO} = require("./api/data")
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
 
@@ -9,6 +10,18 @@ app.use(express.json());
 app.listen(1729, ()=>{
     console.log("On 1729")
 });
+
+async function authenticateBearer(req, res){
+    let token = req.headers.authorization;
+    if(token == null || token.split(" ")[0] != "Bearer") {
+        res.sendStatus(400);
+        return -1;
+    }
+    let auth_res = await authenticate(token.split(" ")[1]);
+    if(auth_res == null) {res.sendStatus(401); return -1;}
+
+    return 1;
+}
 
 app.get("/", (req, res) => {
     res.send("Mess Mate");
@@ -25,3 +38,14 @@ app.post("/new_user", async (req, res) => {
     let x = await newUser(data);
     res.send(x);
 })
+
+app.get("/food", async (req, res) => {
+    if(await authenticateBearer(req, res) != 1) return ; 
+    var id = req.query['id'];
+    var day = req.query['day'];
+    var tr;
+    if(id) tr = await getFoodDetials(id);
+    if(day) tr = await getFoodOnDO(day);
+
+    res.send(tr);
+});
