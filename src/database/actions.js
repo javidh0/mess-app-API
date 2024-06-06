@@ -60,7 +60,7 @@ async function authenticate(token) {
     
     if(x == null) return x;
     let min = (Date.now() - x['time'])/60000;
-    if(min > 1){
+    if(min > 10){
         await tokens.deleteOne({'token': token})
         return null;
     }
@@ -93,5 +93,5 @@ async function authenticate(token) {
 // })()
 
 module.exports = {
-    logIn, newUser
+    logIn, newUser, authenticate
 };
