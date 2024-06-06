@@ -16,11 +16,17 @@ async function getFoodOnDO(day){
             }
         }
     )
-    console.log(fIds);
+    var tr = [];
+    fIds.forEach(x => {
+        tr.push(x['id']);
+    })
+    return {"ids": tr};
 }
 
 async function temp(){
     await getFoodOnDO(3);
 }
 
-temp()
+module.exports = {
+    getFoodDetials, getFoodOnDO
+};
