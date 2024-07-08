@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const {logIn, newUser, authenticate} = require("./src/database/actions");
-const {getFoodDetials, getFoodOnDO} = require("./src/api/data")
+const {getFoodDetials, getFoodOnDO} = require("./src/api/utils")
 const cors = require('cors');
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
@@ -19,7 +19,7 @@ async function authenticateBearer(req, res){
         res.sendStatus(401);
         return -1;
     }
-    let auth_res = await authenticate(token.split(" ")[1]);
+    let auth_res = await authenticate(token.split(" ")[1]); 
     if(auth_res == null) {res.sendStatus(401); return -1;}
 
     return 1;

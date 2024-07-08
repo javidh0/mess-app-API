@@ -1,4 +1,4 @@
-const {food, time} = require("../database/dbs");
+const {food, time} = require("../database/models");
 
 async function getFoodDetials(food_id){
     let x = await food.findOne({"id": food_id})
