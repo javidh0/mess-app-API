@@ -2,10 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const {logIn, newUser, authenticate} = require("./database/actions");
 const {getFoodDetials, getFoodOnDO} = require("./api/data")
+const cors = require('cors');
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
 
 const app = express()
+app.use(cors())
 app.use(express.json());
 app.listen(1729, ()=>{
     console.log("On 1729")
