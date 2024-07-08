@@ -1,4 +1,4 @@
-const {users} = require('./dbs');
+const {users} = require('./models');
 const {tokens} = require('./tokens');
 
 
