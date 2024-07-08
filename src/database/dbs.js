@@ -24,23 +24,6 @@ const users = mongoose.model(
     }
 );
 
-const tokens = mongoose.model(
-    "tokens",
-    {
-        "token" : {
-            type: String,
-            require: true
-        },
-        "user_id" : {
-            type: String,
-            require: true
-        },
-        "time" : {
-            type: Number,
-            require: true
-        }
-    }
-);
 
 const food = mongoose.model(
     "food", 
@@ -86,5 +69,5 @@ const time = mongoose.model(
 // })
 
 module.exports = {
-    users, tokens, time, food
+    users, time, food
 };

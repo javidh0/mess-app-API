@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const {users, tokens} = require('./dbs');
+const {users} = require('./dbs');
+const {tokens} = require('./tokens');
+
 
 async function newUser(data){
     try{
@@ -21,28 +22,40 @@ async function newUser(data){
 }
 
 async function logIn(user_id, password){
-    let x = await users.findOne({'user_id': user_id})
-    if(x == null || x['password'] != password) return '-1';
 
-    x = await tokens.findOne({'user_id': user_id})
-    if(x != null){
-        let min = (Date.now() - x['time'])/60000;
-        if(min < 1) {
-            await tokens.updateOne(
-                {'user_id': user_id},
-                {$set: {"time":Date.now()}}
-            )
-            return x;
-        }
-        await tokens.deleteOne({'user_id': user_id});
+    function findIndex(){
+        for(var i=0; i<tokens.length; i++) 
+            if(tokens[i]['user_id'] == user_id) return i;
+        return -1;
     }
 
-    let token = generateToken()
-    return await tokens.create({
+    let x = await users.findOne({'user_id': user_id})
+    if(x == null || x['password'] != password) return null;
+
+    const idx = findIndex();
+
+    // console.log(idx);
+    if(idx != -1){
+        let x = tokens[idx];
+        let min = (Date.now() - x['time'])/60000;
+        if(min < 1) {
+            // console.log("update");
+            tokens[idx]['time'] = Date.now();
+            return x;
+        }
+        // console.log("delete");
+        tokens.splice(idx, 1);
+    }
+
+    const token = generateToken()
+    const authp = {
         'token' : token,
         'user_id' : user_id,
         'time' : Date.now()
-    });
+    };
+    tokens.push(authp);
+    // console.log("push");
+    return authp;
 }
 
 function generateToken() {
@@ -56,12 +69,20 @@ function generateToken() {
 }
 
 async function authenticate(token) {
-    let x = await tokens.findOne({'token': token})
+    function findIndex(){
+        for(let i=0; i<tokens.length; i++){
+            if(tokens[i]['token'] == token) return i;
+        }
+        return -1;
+    }
+    const idx = findIndex();
     
-    if(x == null) return x;
+    if(idx == -1) return null;
+    const x = tokens[idx];
     let min = (Date.now() - x['time'])/60000;
-    if(min > 10){
-        await tokens.deleteOne({'token': token})
+    if(min > 1){
+        // await tokens.deleteOne({'token': token})
+        tokens.splice(idx, 1);
         return null;
     }
     return x;

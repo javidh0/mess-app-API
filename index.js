@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const {logIn, newUser, authenticate} = require("./database/actions");
-const {getFoodDetials, getFoodOnDO} = require("./api/data")
+const {logIn, newUser, authenticate} = require("./src/database/actions");
+const {getFoodDetials, getFoodOnDO} = require("./src/api/data")
 const cors = require('cors');
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
@@ -16,7 +16,7 @@ app.listen(1729, ()=>{
 async function authenticateBearer(req, res){
     let token = req.headers.authorization;
     if(token == null || token.split(" ")[0] != "Bearer") {
-        res.sendStatus(400);
+        res.sendStatus(401);
         return -1;
     }
     let auth_res = await authenticate(token.split(" ")[1]);
@@ -26,18 +26,20 @@ async function authenticateBearer(req, res){
 }
 
 app.get("/", (req, res) => {
-    res.send("Mess Mate");
+    res.send("Mess Mate"); 
 })
 
 app.post("/login", async (req, res) => {
     let auth = req.body['auth'];
     let x = await logIn(auth['user_id'], auth['password']);
-    res.send(x);
+    if(x == null) res.sendStatus(401);
+    else res.send(x);
 })
 
 app.post("/new_user", async (req, res) => {
     let data = req.body['data'];
     let x = await newUser(data);
+    if(x['error'] != null) res.status(422);
     res.send(x);
 })
 

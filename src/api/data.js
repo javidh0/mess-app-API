@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const {food, time} = require("../database/dbs");
 
 async function getFoodDetials(food_id){
@@ -21,10 +20,6 @@ async function getFoodOnDO(day){
         tr.push(x['id']);
     })
     return {"ids": tr};
-}
-
-async function temp(){
-    await getFoodOnDO(3);
 }
 
 module.exports = {
