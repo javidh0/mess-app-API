@@ -9,13 +9,13 @@ async function newUser(data){
         data['password'][0];
         data['user_name'][0];
     }catch{
-        return {'error':'requred missing'};
+        return {'error':'Required field missing'};
     }
     let x = await users.findOne({'user_id': data['user_id']});
-    if(x != null) return {'error': 'user_id exist'};
+    if(x != null) return {'error': 'User-Id already exist'};
 
     x = await users.findOne({'email': data['email']})
-    if(x != null) return {'error': 'email exist'};
+    if(x != null) return {'error': 'Email already exist'};
 
     x = await users.create(data);
     return x;
