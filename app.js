@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const {logIn, newUser, authenticate} = require("./src/database/actions");
-const {getFoodDetials, getFoodOnDO} = require("./src/api/utils")
+const {getFoodDetials, getFoodOnDO, getFoodOnDObyMeal} = require("./src/api/utils")
 const cors = require('cors');
+const {time} = require('./src/database/models');
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
 
@@ -54,3 +55,64 @@ app.get("/food", async (req, res) => {
 
     res.send(tr);
 });
+
+app.get("/food_meal", async (req, res) => {
+    if(await authenticateBearer(req, res) != 1) return ; 
+    var day = req.query['day'];
+    var meal = req.query['meal'];
+    var tr;
+    if(day) tr = await getFoodOnDObyMeal(day, meal);
+
+    res.send(tr);
+});
+
+async function execute(){
+    for(let i=0; i<7; i++) {
+        for(let j=0; j<9; j++){
+            let id_ = parseInt(Math.random()*49) + 1000;
+            console.log(await time.create(
+                {
+                    order : id_,
+                    id : id_,
+                    day : i,
+                    meals : 0
+                }
+            )); 
+        }
+        for(let j=0; j<12; j++){
+            let id_ = parseInt(Math.random()*49) + 1000;
+            console.log(await time.create(
+                {
+                    order : id_,
+                    id : id_,
+                    day : i,
+                    meals : 1
+                }
+            ));  
+        }
+        for(let j=0; j<4; j++){
+            let id_ = parseInt(Math.random()*49) + 1000;
+            console.log(await time.create(
+                {
+                    order : id_,
+                    id : id_,
+                    day : i,
+                    meals : 2
+                }
+            )); 
+        }
+        for(let j=0; j<11; j++){
+            let id_ = parseInt(Math.random()*49) + 1000;
+            console.log(await time.create(
+                {
+                    order : id_,
+                    id : id_,
+                    day : i,
+                    meals : 3
+                }
+            ));
+        }
+    }
+}
+
+// execute();
