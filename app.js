@@ -15,6 +15,7 @@ app.listen(1729, ()=>{
 
 async function authenticateBearer(req, res){
     let token = req.headers.authorization;
+    console.log(token);
     if(token == null || token.split(" ")[0] != "Bearer") {
         res.sendStatus(401);
         return -1;
