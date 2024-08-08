@@ -24,7 +24,6 @@ const users = mongoose.model(
     }
 );
 
-
 const food = mongoose.model(
     "food", 
     {
@@ -37,8 +36,11 @@ const food = mongoose.model(
             type: String,
             require : true
         },
-        "img" : {
+        "image" : {
             type : String
+        },
+        "rating" : {
+            type : Number,
         }
     }
 );
@@ -57,6 +59,10 @@ const time = mongoose.model(
         "id" : {
             type: Number,
             require: true
+        },
+        "meals" : {
+            type : Number,
+            require: true,
         }
     }
 )
