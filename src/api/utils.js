@@ -5,6 +5,23 @@ async function getFoodDetials(food_id){
     return x;
 }
 
+async function getFoodOnDObyMeal(day, meal){
+    let fIds = await time.find(
+        {"day" : day, "meals" : meal},
+        ['id'],
+        {
+            sort:{
+                order:1
+            }
+        }
+    );
+    var tr = [];
+    fIds.forEach(x => {
+        tr.push(x['id']);
+    })
+    return {"ids": tr};
+}
+
 async function getFoodOnDO(day){
     let fIds = await time.find(
         {"day": day},
@@ -23,5 +40,5 @@ async function getFoodOnDO(day){
 }
 
 module.exports = {
-    getFoodDetials, getFoodOnDO
+    getFoodDetials, getFoodOnDO, getFoodOnDObyMeal
 };
