@@ -24,6 +24,21 @@ const users = mongoose.model(
     }
 );
 
+const ratings = mongoose.model(
+    "ratings", 
+    {
+        "user_id" : {
+            type : String,
+            require : true
+        },
+        "food_id" : {
+            type : String,
+            require : true
+        },
+        "rating" : Number
+    }
+)
+
 const food = mongoose.model(
     "food", 
     {
@@ -38,9 +53,6 @@ const food = mongoose.model(
         },
         "image" : {
             type : String
-        },
-        "rating" : {
-            type : Number,
         }
     }
 );
@@ -75,5 +87,5 @@ const time = mongoose.model(
 // })
 
 module.exports = {
-    users, time, food
+    users, time, food, ratings
 };

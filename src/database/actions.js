@@ -80,7 +80,7 @@ async function authenticate(token) {
     if(idx == -1) return null;
     const x = tokens[idx];
     let min = (Date.now() - x['time'])/60000;
-    if(min > 1){
+    if(min > 10){
         // await tokens.deleteOne({'token': token})
         tokens.splice(idx, 1);
         return null;

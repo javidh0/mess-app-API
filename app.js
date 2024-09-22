@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const {logIn, newUser, authenticate} = require("./src/database/actions");
-const {getFoodDetials, getFoodOnDO, getFoodOnDObyMeal} = require("./src/api/utils")
+const {getFoodDetials, getFoodOnDO, getFoodOnDObyMeal, updateRating} = require("./src/api/utils")
 const cors = require('cors');
-const {time} = require('./src/database/models');
+const {time, food} = require('./src/database/models');
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
 
@@ -15,6 +15,7 @@ app.listen(1729, ()=>{
 });
 
 async function authenticateBearer(req, res){
+    
     let token = req.headers.authorization;
     console.log(token);
     if(token == null || token.split(" ")[0] != "Bearer") {
@@ -48,10 +49,9 @@ app.post("/new_user", async (req, res) => {
 app.get("/food", async (req, res) => {
     if(await authenticateBearer(req, res) != 1) return ; 
     var id = req.query['id'];
-    var day = req.query['day'];
+    var user_id = req.query['user_id'];
     var tr;
-    if(id) tr = await getFoodDetials(id);
-    if(day) tr = await getFoodOnDO(day);
+    if(id) tr = await getFoodDetials(id, user_id);
 
     res.send(tr);
 });
@@ -66,53 +66,21 @@ app.get("/food_meal", async (req, res) => {
     res.send(tr);
 });
 
+app.post("/update_rating", async (req, res) => {
+    if(await authenticateBearer(req, res) != 1) return ;
+    let food_id = req.query['food_id'];
+    let user_id = req.query['user_id'];
+    let rating = req.query['rating'];
+
+    let resp = await updateRating(food_id, user_id, rating);
+    res.send(resp);
+})
+
 async function execute(){
-    for(let i=0; i<7; i++) {
-        for(let j=0; j<9; j++){
-            let id_ = parseInt(Math.random()*49) + 1000;
-            console.log(await time.create(
-                {
-                    order : id_,
-                    id : id_,
-                    day : i,
-                    meals : 0
-                }
-            )); 
-        }
-        for(let j=0; j<12; j++){
-            let id_ = parseInt(Math.random()*49) + 1000;
-            console.log(await time.create(
-                {
-                    order : id_,
-                    id : id_,
-                    day : i,
-                    meals : 1
-                }
-            ));  
-        }
-        for(let j=0; j<4; j++){
-            let id_ = parseInt(Math.random()*49) + 1000;
-            console.log(await time.create(
-                {
-                    order : id_,
-                    id : id_,
-                    day : i,
-                    meals : 2
-                }
-            )); 
-        }
-        for(let j=0; j<11; j++){
-            let id_ = parseInt(Math.random()*49) + 1000;
-            console.log(await time.create(
-                {
-                    order : id_,
-                    id : id_,
-                    day : i,
-                    meals : 3
-                }
-            ));
-        }
-    }
+    for(var i=1000; i<1051; i++) console.log(await food.create({
+        "id" : i,
+        "name" : `Name_${i}`
+    }));
 }
 
 // execute();
