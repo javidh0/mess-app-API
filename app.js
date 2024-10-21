@@ -67,6 +67,15 @@ app.get("/food_meal", async (req, res) => {
 });
 
 app.post("/update_rating", async (req, res) => {
+    var body = {
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            'Authorization' : `Bearer ${token}`
+        }
+    };
+    console.log(req.headers);
+
     if(await authenticateBearer(req, res) != 1) return ;
     let food_id = req.query['food_id'];
     let user_id = req.query['user_id'];

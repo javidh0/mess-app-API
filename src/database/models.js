@@ -10,8 +10,6 @@ const users = mongoose.model(
         },
         'email' : {
             type: String,
-            require: true,
-            unique : true
         },
         'user_name' : {
             type: String,
