@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const {logIn, newUser, authenticate} = require("../src/database/actions");
-const {getFoodDetials, getFoodOnDO, getFoodOnDObyMeal, updateRating} = require("../src/api/utils")
+const {logIn, newUser, authenticate} = require("./src/database/actions");
+const {getFoodDetials, getFoodOnDO, getFoodOnDObyMeal, updateRating} = require("./src/api/utils")
 const cors = require('cors');
-const {time, food} = require('../src/database/models');
+const {time, food} = require('./src/database/models');
 
 mongoose.connect("mongodb://127.0.0.1:27017/mess_mate");
 
